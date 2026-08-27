@@ -10,7 +10,6 @@ export default defineConfig({
     version: '1.0.0',
     permissions: ['storage', 'downloads', 'activeTab'],
     action: { default_title: 'Save this receipt' },
-    options_ui: { page: 'options.html', open_in_tab: true },
     icons: {
       16: 'icon/16.png',
       32: 'icon/32.png',

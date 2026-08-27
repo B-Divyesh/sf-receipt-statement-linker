@@ -1,5 +1,5 @@
 const CACHE = 'receipt-linker-shell-v1';
-const SHELL = ['/', '/privacy/', '/terms/', '/assets/evidence-desk-900.webp', '/assets/mark.svg'];
+const SHELL = ['/', '/privacy/', '/terms/', '/assets/evidence-desk-900.avif', '/assets/evidence-desk-900.webp', '/assets/mark.svg'];
 self.addEventListener('install', (event) => event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(SHELL))));
 self.addEventListener('activate', (event) => event.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((key) => key !== CACHE).map((key) => caches.delete(key))))));
 self.addEventListener('fetch', (event) => {

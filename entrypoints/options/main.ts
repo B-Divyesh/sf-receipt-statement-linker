@@ -164,9 +164,13 @@ $('#use-columns').addEventListener('click', async () => {
   if (!columns.date || !columns.amount || !columns.merchant || new Set(Object.values(columns)).size !== 3) { setMessage('#import-message', 'Choose three different columns for date, amount, and merchant.', 'error'); return; }
   const validRows = pendingDocument.rows.filter((row) => normalizeDate(row.values[columns.date] ?? '') && parseAmount(row.values[columns.amount] ?? '') !== null);
   if (!validRows.length) { setMessage('#import-message', 'No rows have both a readable date and amount in those columns. Check the mapping.', 'error'); return; }
+  const previousWorkspace = { document: state.document, columns: state.columns, sourceName: state.sourceName, approvals: state.approvals, dismissedPairs: state.dismissedPairs };
   state.document = pendingDocument; state.columns = columns; state.sourceName = pendingFilename; state.approvals = {}; state.dismissedPairs = [];
   try { await saveState(state); }
-  catch { delete state.document; delete state.columns; delete state.sourceName; state.approvals = {}; state.dismissedPairs = []; setMessage('#import-message', 'This statement does not fit in local browser storage. Export a smaller date range and retry.', 'error'); return; }
+  catch {
+    state.document = previousWorkspace.document; state.columns = previousWorkspace.columns; state.sourceName = previousWorkspace.sourceName; state.approvals = previousWorkspace.approvals; state.dismissedPairs = previousWorkspace.dismissedPairs;
+    setMessage('#import-message', 'This statement does not fit in local browser storage. Export a smaller date range and retry.', 'error'); return;
+  }
   pendingDocument = undefined; $('#mapping').hidden = true; ($('#csv-file') as HTMLInputElement).value = '';
   setMessage('#import-message', `${state.document.rows.length} rows are ready. ${state.document.rows.length - validRows.length} unreadable row(s) will stay unmatched.`, 'success'); renderAll(); location.hash = 'review';
 });

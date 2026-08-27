@@ -25,6 +25,9 @@ try {
   await page.locator('#url').fill('https://northstar.example/receipt/1');
   await page.locator('#capture-form button[type="submit"]').click();
   await page.locator('#form-message').waitFor();
+  const popupAxe = await new AxeBuilder({ page }).analyze();
+  const popupSerious = popupAxe.violations.filter((violation) => ['serious', 'critical'].includes(violation.impact ?? ''));
+  if (popupSerious.length) throw new Error(`Popup axe violations: ${popupSerious.map((violation) => violation.id).join(', ')}`);
 
   await page.goto(`chrome-extension://${extensionId}/options.html`);
   await page.locator('#csv-file').setInputFiles({
