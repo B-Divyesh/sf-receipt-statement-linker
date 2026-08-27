@@ -1,0 +1,28 @@
+{
+  "name": "receipt-statement-linker",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wxt",
+    "dev:site": "vite --config vite.site.config.ts",
+    "build": "node scripts/build.mjs",
+    "build:extension": "wxt build",
+    "build:site": "vite build --config vite.site.config.ts",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:extension": "node scripts/smoke-extension.mjs",
+    "check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.10.2",
+    "@playwright/test": "1.58.2",
+    "@types/chrome": "0.0.320",
+    "@types/node": "22.15.30",
+    "playwright": "1.58.2",
+    "typescript": "5.8.3",
+    "vite": "6.4.3",
+    "vitest": "3.2.7",
+    "wxt": "0.21.4"
+  }
+}

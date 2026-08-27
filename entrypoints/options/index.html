@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Matching workbench — Receipt Statement Linker</title></head>
+<body>
+  <a class="skip-link" href="#main">Skip to workbench</a>
+  <header class="shell topbar">
+    <a class="brand" href="https://receipt-statement-linker.sociobot.in" target="_blank" rel="noreferrer"><img src="/icon/32.png" class="brand-mark" width="27" height="27" alt=""> Receipt Statement Linker</a>
+    <nav class="nav" aria-label="Workbench"><a href="#receipts">Receipts</a><a href="#import">Import</a><a href="#license">License</a></nav>
+  </header>
+  <main id="main" class="shell workbench">
+    <section class="intro">
+      <div><p class="eyebrow">Local matching room</p><h1>Reconnect the paper trail.</h1><p class="lede muted">Import a bank or accounting CSV. Candidates are calculated on this device and nothing is linked until you approve it.</p></div>
+      <dl class="stats" aria-label="Workspace summary"><div><dt>Saved</dt><dd id="stat-saved">0</dd></div><div><dt>Statement rows</dt><dd id="stat-rows">0</dd></div><div><dt>Approved</dt><dd id="stat-approved">0</dd></div></dl>
+    </section>
+
+    <section id="import" class="section" aria-labelledby="import-title">
+      <div class="section-head"><div><p class="eyebrow">01 / Bring the rows</p><h2 id="import-title">Import statement CSV</h2></div><button id="clear-statement" class="danger" type="button" hidden>Clear statement</button></div>
+      <p class="muted measure">CSV files are read locally. We support comma, semicolon, and tab separators, quoted cells, and common date and amount formats.</p>
+      <div id="drop-zone" class="drop-zone">
+        <input id="csv-file" class="file-input" type="file" accept=".csv,text/csv,text/plain" aria-describedby="file-help">
+        <label class="button secondary" for="csv-file">Choose a CSV</label>
+        <p id="file-help" class="muted">No upload. Maximum size: 3 MB.</p>
+      </div>
+      <div id="mapping" class="mapping" hidden>
+        <div><p class="eyebrow">Check the columns</p><p id="mapping-summary" class="muted"></p></div>
+        <div class="mapping-grid">
+          <label>Transaction date <select id="date-column"></select></label>
+          <label>Amount <select id="amount-column"></select></label>
+          <label>Merchant / description <select id="merchant-column"></select></label>
+        </div>
+        <div class="actions"><button id="use-columns" class="primary" type="button">Use these columns</button><button id="cancel-import" class="text-button" type="button">Cancel</button></div>
+      </div>
+      <p id="import-message" class="notice" role="status" aria-live="polite" hidden></p>
+    </section>
+
+    <section id="review" class="section" aria-labelledby="review-title">
+      <div class="section-head"><div><p class="eyebrow">02 / Verify the join</p><h2 id="review-title">Review suggested links</h2></div><div class="actions"><button id="approve-confident" class="secondary" type="button" hidden>Approve exact matches</button></div></div>
+      <p class="muted measure">An exact amount is required. Date proximity and merchant wording raise confidence. Always check before approval.</p>
+      <div id="match-list" class="match-list"></div>
+    </section>
+
+    <section id="export" class="section export-section" aria-labelledby="export-title">
+      <div><p class="eyebrow">03 / Carry the context</p><h2 id="export-title">Export your reviewed result</h2><p class="muted measure">The enriched CSV keeps every original row and adds receipt fields plus an approval status. The JSON manifest is a portable attachment sidecar.</p></div>
+      <div class="actions"><button id="export-csv" class="success" type="button" disabled>Export enriched CSV</button><button id="export-manifest" class="secondary" type="button" disabled>Export attachment manifest</button></div>
+      <p id="export-message" class="notice" role="status" aria-live="polite" hidden></p>
+    </section>
+
+    <section id="receipts" class="section" aria-labelledby="receipts-title">
+      <div class="section-head"><div><p class="eyebrow">Receipt drawer</p><h2 id="receipts-title">Saved receipts</h2></div><button id="add-receipt" class="secondary" type="button">Save another receipt</button></div>
+      <div id="receipt-list" class="receipt-list"></div>
+    </section>
+
+    <section id="license" class="section license-section" aria-labelledby="license-title">
+      <div><p class="eyebrow">Keep the evidence shelf open</p><h2 id="license-title">Unlimited capture, once.</h2><p class="muted measure">The free edition stores 25 receipts and includes matching and both exports. A one-time $19 license removes the receipt limit and adds a portable library backup. No subscription.</p></div>
+      <div class="license-actions">
+        <a id="buy-link" class="button primary" href="https://api.sociobot.in/api/v1/products/receipt-statement-linker/checkout" target="_blank" rel="noreferrer">Buy once — $19</a>
+        <form id="license-form"><label>Have a license? Paste it <input id="license-token" autocomplete="off" spellcheck="false"></label><button class="secondary" type="submit">Verify license</button></form>
+        <div id="library-tools" class="actions" hidden><button id="backup-library" class="secondary" type="button">Back up receipt library</button><input id="restore-file" class="file-input" type="file" accept="application/json,.json"><label class="button secondary" for="restore-file">Restore library backup</label></div>
+        <p id="license-message" class="notice" role="status" aria-live="polite" hidden></p>
+      </div>
+    </section>
+    <p class="disclaimer">Receipt Statement Linker preserves your review decisions; it does not provide accounting or tax advice. Your browser profile controls local retention and backups.</p>
+  </main>
+  <footer class="shell footer"><span>Private by design · v1.0</span><span><a href="https://receipt-statement-linker.sociobot.in/privacy/" target="_blank" rel="noreferrer">Privacy</a> · <a href="https://receipt-statement-linker.sociobot.in/terms/" target="_blank" rel="noreferrer">Terms</a></span></footer>
+
+  <dialog id="confirm-dialog" aria-labelledby="confirm-title"><div class="dialog-body"><h2 id="confirm-title">Confirm</h2><p id="confirm-copy" class="muted"></p><div class="actions"><button id="confirm-action" class="danger" type="button">Confirm</button><button id="confirm-cancel" class="secondary" type="button">Cancel</button></div></div></dialog>
+  <script type="module" src="./main.ts"></script>
+</body>
+</html>

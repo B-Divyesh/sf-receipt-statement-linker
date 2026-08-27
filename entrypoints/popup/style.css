@@ -1,0 +1,11 @@
+@import '../../src/ui.css';
+html { width: 390px; }
+.popup-main { display: grid; gap: 20px; padding: 22px; }
+.popup-head { display: flex; align-items: center; gap: 12px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+.popup-head h1 { margin-top: 2px; font-size: 1.65rem; }
+form { display: grid; gap: 14px; }
+.amount-row { grid-template-columns: 1fr 105px; }
+form > button { width: 100%; margin-top: 2px; }
+footer { padding-top: 4px; border-top: 1px solid var(--line); }
+footer button { width: 100%; }
+@media (max-width: 389px) { html { width: 100%; } .popup-main { padding: 16px; } }

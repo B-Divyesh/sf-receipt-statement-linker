@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Save receipt — Receipt Statement Linker</title></head>
+<body>
+  <a class="skip-link" href="#main">Skip to form</a>
+  <main id="main" class="popup-main">
+    <header class="popup-head"><img src="/icon/32.png" width="32" height="32" alt=""><div><p class="eyebrow">Receipt evidence</p><h1>Save this purchase</h1></div></header>
+    <form id="capture-form" novalidate>
+      <label>Merchant <input id="merchant" name="merchant" autocomplete="organization" required maxlength="120"></label>
+      <div class="field-row amount-row">
+        <label>Amount <input id="amount" name="amount" inputmode="decimal" placeholder="0.00" required></label>
+        <label>Currency <select id="currency" name="currency"><option>USD</option><option>EUR</option><option>GBP</option><option>INR</option><option>CAD</option><option>AUD</option><option>JPY</option></select></label>
+      </div>
+      <label>Purchase date <input id="purchase-date" name="purchaseDate" type="date" required></label>
+      <label>Receipt URL <input id="url" name="url" type="url" inputmode="url" required></label>
+      <label>Note <textarea id="note" name="note" maxlength="300" placeholder="Order number or project (optional)"></textarea></label>
+      <p id="form-message" class="notice" role="status" aria-live="polite" hidden></p>
+      <button class="primary" type="submit">Save receipt</button>
+    </form>
+    <footer><button id="open-workbench" class="text-button" type="button">Open matching workbench <span id="receipt-count"></span></button></footer>
+  </main>
+  <script type="module" src="./main.ts"></script>
+</body>
+</html>
