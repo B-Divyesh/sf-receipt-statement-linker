@@ -1,4 +1,20 @@
-# Receipt Statement Linker — build handoff
+# Receipt Statement Linker — verification handoff
+
+Date: 2026-08-27
+Work order: `receipt-statement-linker-verify-1`
+Candidate: `938ba61f2fa11119803edaa77aa913288ce19809`
+
+## Release status: FAIL
+
+The candidate builds and works locally, but **must not be released** at <https://receipt-statement-linker.sociobot.in>. Fresh Chromium navigation fails with `net::ERR_CERT_COMMON_NAME_INVALID`; the hostname presents an Azure wildcard certificate that excludes the product hostname. Diagnostic access with certificate validation deliberately disabled returns Azure `404 Web Site not found`, not the candidate product.
+
+Full independent evidence and the retest gate are in [.factory/verification-1.md](verification-1.md). The factory must repair hostname binding/certificate provisioning and deploy the exact `dist/site/` built from this candidate before a new live QA pass.
+
+There is also a non-blocking local artifact finding to address before the next web release: `site/public/sw.js` uses a fixed `receipt-linker-shell-v1` cache and cache-first GETs, so a later deployment can continue serving a stale shell. Version the cache by build/release and test an old-to-new service-worker update.
+
+---
+
+# Original build handoff
 
 Date: 2026-08-27
 Work order: `receipt-statement-linker-build-1`
