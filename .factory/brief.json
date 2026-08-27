@@ -1,0 +1,12 @@
+{
+  "slug": "receipt-statement-linker",
+  "title": "Receipt Statement Linker",
+  "territory": "utilities",
+  "user": "Freelancers and households who make purchases online and need a privacy-preserving way to connect browser receipts with later bank or accounting-statement rows.",
+  "smallest_useful_product": "A local-first browser extension that lets users save a receipt URL/merchant/amount/date at checkout, then matches an imported CSV by amount/date/merchant and exports a reviewable enriched CSV plus attachment manifest.",
+  "success_measure": "At least 70% of a user's captured purchases are matched to a statement row with user approval, and fewer than 2% of approved matches are later corrected.",
+  "artifact_class": "browser-extension",
+  "monetization": "one-time",
+  "constraints": "No bank login access; process statement files locally; provide false-match review; do not claim accounting or tax correctness; minimize page permissions.",
+  "non_goals": ["bank credential aggregation", "automatic spending advice", "receipt OCR", "tax filing"]
+}
