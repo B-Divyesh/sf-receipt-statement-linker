@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Capture receipt context in your browser, privately match it to a statement CSV, and export a reviewable enriched file.">
+  <meta name="theme-color" content="#071416"><title>Receipt Statement Linker — Preserve the proof behind every purchase</title>
+  <link rel="icon" href="/assets/mark.svg" type="image/svg+xml"><link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+  <header class="site-header shell"><a class="brand" href="/"><img src="/assets/mark.svg" width="28" height="28" alt="">Receipt Statement Linker</a><nav aria-label="Main navigation"><a href="#how">How it works</a><a href="#pricing">Pricing</a><a class="button secondary small" href="/downloads/receipt-statement-linker-chrome.zip">Download extension</a></nav></header>
+  <main id="main">
+    <section class="hero shell">
+      <div class="hero-art" aria-hidden="true"><picture><source media="(max-width: 720px)" srcset="/assets/evidence-desk-900.webp"><img src="/assets/evidence-desk-1536.webp" srcset="/assets/evidence-desk-900.webp 900w, /assets/evidence-desk-1536.webp 1536w" sizes="(max-width: 720px) 100vw, 1180px" width="1536" height="1024" alt="" fetchpriority="high" decoding="async"></picture></div>
+      <div class="hero-copy"><p class="eyebrow">Your purchase context, carried forward</p><h1>The bank row forgot. Your receipt didn’t.</h1><p>Save the useful details at checkout. Later, match them to a statement CSV on your device—and export the context you approved.</p><div class="actions"><a class="button primary" href="/downloads/receipt-statement-linker-chrome.zip">Download for Chromium</a><a class="quiet-link" href="#how">See the private workflow <span aria-hidden="true">↓</span></a></div><p class="microcopy">Free for 25 receipts · Unzip, then choose “Load unpacked” at chrome://extensions</p></div>
+      <div class="privacy-seal"><span class="pulse" aria-hidden="true"></span><strong>Local room</strong><span>No statement upload</span></div>
+    </section>
+
+    <section class="proof-strip" aria-label="Product promises"><div class="shell proof-grid"><p><strong>No bank login</strong><span>Import only the CSV you choose.</span></p><p><strong>Approval required</strong><span>Suggestions never become links by themselves.</span></p><p><strong>Portable result</strong><span>Export enriched CSV and JSON manifest.</span></p></div></section>
+
+    <section id="how" class="shell process" aria-labelledby="process-title">
+      <div class="section-intro"><p class="eyebrow">A short evidence trail</p><h2 id="process-title">From checkout clue to useful statement.</h2><p>No dashboard to feed. No opaque categorizer. Just three deliberate moments around data you already own.</p></div>
+      <ol class="steps">
+        <li><span class="step-num">01</span><div class="step-visual receipt-visual" aria-hidden="true"><span class="paper-line"></span><span class="paper-line short"></span><span class="paper-total"></span></div><h3>Capture at the source</h3><p>Use the toolbar button on a receipt or confirmation page. Confirm merchant, amount, date, URL, and an optional note.</p></li>
+        <li><span class="step-num">02</span><div class="step-visual link-visual" aria-hidden="true"><span>48.20</span><i></i><span>48.20</span></div><h3>Review the join</h3><p>Import a statement CSV. Exact amount, nearby date, and merchant wording produce candidates for you to approve or reject.</p></li>
+        <li><span class="step-num">03</span><div class="step-visual export-visual" aria-hidden="true"><span></span><span></span><span></span><b>✓</b></div><h3>Carry context out</h3><p>Export every original row plus approved receipt details, and a JSON attachment manifest for your own archive.</p></li>
+      </ol>
+    </section>
+
+    <section class="workbench-preview" aria-labelledby="preview-title">
+      <div class="shell preview-grid"><div class="preview-copy"><p class="eyebrow">Review before trust</p><h2 id="preview-title">A match is a proposal, not a verdict.</h2><p>Every candidate shows both sides of the join. Choose a different receipt, dismiss a false match, or undo an approval at any time before export.</p><ul><li>Amount must match within two cents</li><li>Purchase and posting dates can differ by up to 10 days</li><li>Merchant wording only adjusts confidence</li></ul></div>
+        <div class="match-demo" aria-label="Example of a suggested receipt match"><div><small>Statement row</small><strong>NORTH STAR MARKET #081</strong><span>May 14 · −$48.20</span></div><i aria-hidden="true">↔</i><div><small>Suggested receipt</small><strong>North Star Market</strong><span>May 13 · $48.20</span></div><footer><span><b aria-hidden="true"></b> 96% confidence</span><button type="button" tabindex="-1">Approve link</button></footer></div>
+      </div>
+    </section>
+
+    <section id="pricing" class="shell pricing" aria-labelledby="pricing-title">
+      <div><p class="eyebrow">Useful free. Unlimited once.</p><h2 id="pricing-title">Keep your evidence shelf open.</h2><p>The complete matching and export workflow is free. Pay only when your saved receipt library outgrows 25 items.</p></div>
+      <div class="price-panel"><p class="price"><span>$</span>19</p><p>One-time license</p><ul><li>Unlimited saved receipts</li><li>Portable library backup</li><li>Matching and exports included free</li></ul><a id="buy-license" class="button primary" href="https://api.sociobot.in/api/v1/products/receipt-statement-linker/checkout">Buy once — $19</a><button id="restore-license" class="restore" type="button">Have a license? Restore it</button><div id="license-entry" hidden><label>License token <input id="license-token" autocomplete="off" spellcheck="false"></label><button id="verify-license" class="button secondary" type="button">Verify license</button></div><p id="license-status" class="license-status" aria-live="polite"></p><p class="fineprint">Secure checkout by Sociobot/Dodo, merchant of record. Refunds are handled there and revoke the license. <a href="/terms/">Terms apply.</a></p></div>
+    </section>
+
+    <section class="final-cta"><div class="shell"><p class="eyebrow">Close the handoff gap</p><h2>Make the next statement row recognizable.</h2><a class="button primary" href="/downloads/receipt-statement-linker-chrome.zip">Download the extension</a><p id="network-state" class="network-state" aria-live="polite"></p></div></section>
+  </main>
+  <footer class="site-footer shell"><div><a class="brand" href="/"><img src="/assets/mark.svg" width="26" height="26" alt="">Receipt Statement Linker</a><p>Private purchase provenance for ordinary people.</p></div><nav aria-label="Legal"><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="https://github.com/B-Divyesh/sf-receipt-statement-linker" rel="noreferrer">Source</a></nav><p class="generated-note">Environmental artwork generated for this product with Azure OpenAI.</p></footer>
+  <script type="module" src="/main.ts"></script>
+</body>
+</html>
