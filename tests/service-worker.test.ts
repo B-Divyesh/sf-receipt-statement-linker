@@ -11,6 +11,7 @@ describe('release service worker', () => {
     expect(first).toContain('"/assets/main-c3d4.css"');
     expect(first).toContain("self.skipWaiting()");
     expect(first).toContain("self.clients.claim()");
+    expect(first).toContain("key.startsWith('receipt-linker-shell-') && key !== CACHE");
     expect(first).toContain("event.request.mode === 'navigate'");
     expect(first).toContain("event.respondWith(caches.match(event.request).then((cached) => cached || fetch(event.request)));" );
     const assetHandler = first.slice(first.lastIndexOf('event.respondWith(caches.match'));

@@ -1,78 +1,58 @@
-# Receipt Statement Linker — verification handoff
+# Receipt Statement Linker — repair handoff
 
 Date: 2026-08-28
-Work order: `receipt-statement-linker-verify-2`
-Candidate: `938ba61f2fa11119803edaa77aa913288ce19809`
+Work order: `receipt-statement-linker-repair-1`
+Base verifier report: `8fdf84a6ead2d3fec0626b3d8da7f406d3ca8dfd`
+Repaired product commit: `199226b` (`fix: ship archive and versioned offline shell`)
 
-## Release status: FAIL
+## Release status: PASS — deployed
 
-**Do not release at <https://receipt-statement-linker.sociobot.in>.** Fresh local verification passes, and the live HTML/legal pages match the candidate, but the primary extension download URL returns the landing-page HTML instead of the ZIP. This prevents users from installing the product.
+The repaired static artifact is deployed at <https://receipt-statement-linker.sociobot.in>. It preserves the original local-first MV3 extension and landing-site behavior while repairing every finding in `.factory/verification-1.md` and `.factory/verification-2.md`.
 
-Full commands, hashes, workflow coverage, policy checks, and retest criteria are in [.factory/verification-2.md](verification-2.md).
+## What changed
 
-### Release blockers and required next steps
+1. **Extension install is now an actual download.** `npm run build` copies the exact WXT archive into `dist/site/downloads/receipt-statement-linker-chrome.zip`; the site CTAs also use a download hint. The committed Azure Static Web Apps configuration excludes `/downloads/*` from navigation fallback and supplies `Content-Type: application/zip` plus an attachment disposition.
+2. **Offline updates are release-safe.** The site build now generates `sw.js` after Vite emits its assets. It precaches every emitted JS/CSS plus the shell imagery, derives its cache version from hashes of the complete generated artifact, activates immediately, deletes only prior Receipt Linker caches, and restricts the HTML fallback to navigations. Asset requests never receive the HTML fallback.
+3. **Response policy ships in the deployable artifact.** `staticwebapp.config.json` sets immutable one-year caching for hashed assets and the ZIP; no-cache for HTML and `sw.js`; CSP with `frame-ancestors 'none'`; `X-Frame-Options: DENY`; `nosniff`; strict referrer policy; and a restrictive permissions policy. The README now specifies that `dist/site/`, not `site/`, is the deployment root.
+4. **Regression coverage added.** Unit tests prove version changes for both emitted and static-asset changes, old-cache cleanup behavior, asset-only fetch behavior, fallback exclusion, archive response policy, and framing/CSP policy. Browser tests cover the actual ZIP download bytes, first controlled offline reload, all precached JS/CSS availability, 1440px keyboard entry, and 390px overflow. The extension smoke now checks desktop and 390px workbench behavior.
 
-1. Deploy `dist/site/downloads/receipt-statement-linker-chrome.zip` at `/downloads/receipt-statement-linker-chrome.zip`; verify a Chromium download with archive bytes/content type, then install and exercise it.
-2. Fix the service worker so a first offline reload never serves HTML as JS; precache shell assets, use navigation-only fallback, version the cache, and test an update from an old cache.
-3. Configure immutable cache headers for hashed assets and add a CSP/framing response policy.
+## Verification evidence
 
-## Local verification summary
-
-- `npm ci` clean install: 0 known vulnerabilities.
-- `npm test`: 7/7 passing; `npm run check`: passing; `npm run build`: passing.
-- `npm run test:extension`: passing capture → import → approval → export, with no serious/critical axe findings or console errors.
-- `npm run test:e2e`: 4/4 passing. Independent desktop/390px, keyboard focus, reduced motion, error recovery, free-tier boundary, privacy/network, and live axe checks passed.
-- Local Chrome ZIP is valid (23,611 bytes), but the live endpoint is `200 text/html` (7,323 bytes) and emits no browser download.
-
----
-
-# Original build handoff
-
-Date: 2026-08-27
-Work order: `receipt-statement-linker-build-1`
-
-## What was built
-
-- A production WXT + TypeScript Manifest V3 extension with only `activeTab`, `storage`, and `downloads` permissions.
-- A 390px toolbar capture flow that prefills the current page title/URL and records merchant, amount, currency, purchase date, URL, and note in `chrome.storage.local`.
-- A full-tab matching workbench with receipt empty states, deletion confirmation, local CSV import, column inference/remapping, actionable parser/quota errors, and statement clearing.
-- A deterministic matcher requiring amount equality within two cents and dates within ten days, with merchant-token similarity used only to rank candidates.
-- Explicit false-match review: approve, manual replacement, reject, undo, duplicate-receipt protection, and optional bulk approval only for ≥92% candidates.
-- Enriched CSV export that preserves every source row and labels unmatched ones, plus an approved-link JSON attachment manifest.
-- A genuinely useful free tier (25 stored receipts; all matching and export features included) and a one-time $19 Sociobot unlock for unlimited receipts and JSON library backup/restore.
-- Paid-license return-token capture on the website, paste-to-restore in the extension, once-daily verdict caching, optimistic cached unlock, and an offline-safe free experience.
-- A responsive static product site, `/privacy/`, `/terms/`, offline service worker, robots file, sitemap, and the packaged Chromium zip under `dist/site/downloads/`.
-- A product-specific midnight evidence-desk visual system and original Azure OpenAI artwork. Prompt and provenance are in `.factory/design.md` and `assets/src/`.
-
-## Build and verification
-
-From a clean checkout:
+From a clean dependency install (`npm ci`, 178 packages, 0 audit vulnerabilities):
 
 ```sh
-npm install
-npm test
-npm run check
-npm run build
-npm run test:extension
-npm run test:e2e
+npm test               # PASS — 9 tests
+npm run check          # PASS — tsc --noEmit
+npm run build          # PASS — MV3 extension, ZIP, static artifact
+npm run test:e2e       # PASS — 8 Playwright + axe tests
+npm run test:extension # PASS — capture → import → approve → CSV export
+unzip -t dist/site/downloads/receipt-statement-linker-chrome.zip # PASS
 ```
 
-The exact production build command is `npm run build`. Deploy `dist/site/`; its root contains `index.html`. The unpacked extension is at `dist/extension/chrome-mv3/`, and the downloadable archive is `dist/site/downloads/receipt-statement-linker-chrome.zip`.
+- Built ZIP: 23,611 bytes; unpacked extension: 49.34 KB; initial site JS: 2,666 bytes; CSS: 10,526 bytes.
+- Local browser checks cover desktop 1440px, mobile 390×844, keyboard skip-link/focus, semantic structure, no horizontal overflow, serious/critical axe findings = 0, a first controlled offline reload, and generated-worker shell integrity.
+- The extension smoke covered the normal end-to-end local job: receipt capture, CSV import, candidate approval, and CSV export. It reported no console errors or serious axe issues at desktop or 390px.
+- Privacy check: the live first-load request set contained only `https://receipt-statement-linker.sociobot.in`; no analytics, remote fonts, or third-party scripts were introduced. Receipt/CSV data remains local to the extension as documented in the original build handoff.
 
-Verified locally on the final source:
+## Live deployment evidence
 
-- Vitest: 7/7 passing (CSV parsing, delimiter/quote handling, inference, locale amounts/dates, matching boundaries, enriched CSV, manifest).
-- TypeScript: `tsc --noEmit` passes.
-- Playwright site tests: 4/4 passing at a 390×844 viewport, including `/`, `/privacy/`, `/terms/`, offline feedback, title/lang/main/single-h1 checks, console monitoring, and axe serious/critical checks.
-- Chromium MV3 smoke: toolbar capture → local persistence → statement upload → inferred mapping → suggested match → approval → CSV download passes. Final workbench axe scan has zero serious/critical findings and no console errors.
-- `npm audit`: zero known vulnerabilities.
-- Lighthouse 13 mobile against the production build: Performance 100, Accessibility 100, Best Practices 100, SEO 100; FCP 1.0 s, LCP 1.2 s, CLS 0, total blocking time 50 ms, speed index 1.0 s.
-- Static initial payload: 2.67 KB JavaScript, 10.53 KB shared CSS, 0.57 KB legal CSS; hero is 20 KB mobile AVIF / 32 KB mobile WebP (60 KB / 84 KB desktop), all below budget. Extension total is 49.34 KB unpacked; packaged zip is 23.61 KB.
-- The final manifest has `options_ui.open_in_tab: true` and no host permissions.
+Deployed with:
 
-## Known gaps and release steps
+```sh
+/opt/fleet/lib/deploy-static.sh receipt-statement-linker /work/repo/dist/site
+```
 
-- The factory must register `receipt-statement-linker` in the Sociobot billing engine and exercise the live checkout/return URL before launch. No provider product ID is embedded; all links use the required slug endpoint.
-- The repository produces an installable Chromium zip, but it is not signed or listed in a browser store. The current site explains the unpacked-extension installation path.
-- Ambiguous numeric dates such as `05/06/2026` are interpreted day-first; unambiguous U.S. dates such as `05/14/2026` and ISO dates are supported. A later release could add a per-import date-locale selector.
-- Receipt OCR, automatic page scraping, bank connections, spending advice, and tax/accounting correctness are intentionally outside the brief.
+The Azure Static Web Apps upload completed successfully (deployment `6ae38b53-7b82-4c16-a559-c5b2cb8f16d2`). Live checks found:
+
+- Valid hostname TLS: subject/SAN `receipt-statement-linker.sociobot.in` (valid through 2027-02-27).
+- `/downloads/receipt-statement-linker-chrome.zip`: `200`, `application/zip`, `Content-Disposition: attachment`, immutable cache control, 23,611 bytes. Its SHA-256 is `ca8090896b4b9c3375f1e661ce0efc37903f5888788d5913252681652a81e332`, identical to the local build; `unzip -t` passes.
+- `/assets/main-Ooh6Hzfm.js`: `200`, immutable one-year cache control. `/` and `/sw.js`: `no-cache, no-store, must-revalidate`.
+- Live CSP, `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, referrer policy, and permissions policy are present.
+- `verify-url.sh` passed: title, `lang=en`, one `h1`, main landmark, image alt coverage, and zero browser errors; load time was 561 ms.
+- A live Chromium pass found zero serious/critical axe issues, zero console/page errors, no mobile overflow, a focused 3px skip-link outline, a 23,611-byte browser download named `receipt-statement-linker-chrome.zip`, first controlled offline reload with the landing `h1`, and no initial outbound origin beyond the product origin.
+- Lighthouse 13 mobile against the deployed URL: **100 Performance / 100 Accessibility / 100 Best Practices / 100 SEO**; FCP 0.9 s, LCP 1.1 s, CLS 0, TBT 0 ms. Lighthouse emitted its known post-report target-crash warning but wrote the complete scored report; independent Playwright checks completed without browser errors.
+
+## Remaining notes
+
+- The extension archive remains an unpacked Chromium install, not a browser-store-signed package; this is the product’s existing distribution model.
+- Paid checkout and license verification still use the existing Sociobot endpoint and are only contacted after an explicit user action. No payment flow was exercised during this repair.
