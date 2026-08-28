@@ -23,9 +23,18 @@ describe('static deployment policy', () => {
   it('keeps the install path and deployment root aligned', async () => {
     const readme = await readFile('README.md', 'utf8');
     const index = await readFile('site/index.html', 'utf8');
+    const deployConfig = JSON.parse(await readFile('swa-cli.config.json', 'utf8')) as {
+      configurations: Record<string, { outputLocation: string; swaConfigLocation: string; appName: string; resourceGroup: string }>;
+    };
 
     expect(index).toContain('/downloads/receipt-statement-linker-chrome.zip');
     expect(readme).toContain('dist/site/');
     expect(readme).toContain('downloads/receipt-statement-linker-chrome.zip');
+    expect(deployConfig.configurations['receipt-statement-linker']).toMatchObject({
+      outputLocation: 'dist/site',
+      swaConfigLocation: 'dist/site',
+      appName: 'sf-receipt-statement-linker',
+      resourceGroup: 'sociobot'
+    });
   });
 });

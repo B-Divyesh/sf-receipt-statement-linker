@@ -1,0 +1,13 @@
+{
+  "$schema": "https://aka.ms/azure/static-web-apps-cli/schema",
+  "configurations": {
+    "receipt-statement-linker": {
+      "appLocation": ".",
+      "outputLocation": "dist/site",
+      "swaConfigLocation": "dist/site",
+      "resourceGroup": "sociobot",
+      "appName": "sf-receipt-statement-linker",
+      "useKeychain": false
+    }
+  }
+}
