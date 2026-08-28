@@ -1,4 +1,32 @@
-# Receipt Statement Linker — build handoff
+# Receipt Statement Linker — verification handoff
+
+Date: 2026-08-28
+Work order: `receipt-statement-linker-verify-2`
+Candidate: `938ba61f2fa11119803edaa77aa913288ce19809`
+
+## Release status: FAIL
+
+**Do not release at <https://receipt-statement-linker.sociobot.in>.** Fresh local verification passes, and the live HTML/legal pages match the candidate, but the primary extension download URL returns the landing-page HTML instead of the ZIP. This prevents users from installing the product.
+
+Full commands, hashes, workflow coverage, policy checks, and retest criteria are in [.factory/verification-2.md](verification-2.md).
+
+### Release blockers and required next steps
+
+1. Deploy `dist/site/downloads/receipt-statement-linker-chrome.zip` at `/downloads/receipt-statement-linker-chrome.zip`; verify a Chromium download with archive bytes/content type, then install and exercise it.
+2. Fix the service worker so a first offline reload never serves HTML as JS; precache shell assets, use navigation-only fallback, version the cache, and test an update from an old cache.
+3. Configure immutable cache headers for hashed assets and add a CSP/framing response policy.
+
+## Local verification summary
+
+- `npm ci` clean install: 0 known vulnerabilities.
+- `npm test`: 7/7 passing; `npm run check`: passing; `npm run build`: passing.
+- `npm run test:extension`: passing capture → import → approval → export, with no serious/critical axe findings or console errors.
+- `npm run test:e2e`: 4/4 passing. Independent desktop/390px, keyboard focus, reduced motion, error recovery, free-tier boundary, privacy/network, and live axe checks passed.
+- Local Chrome ZIP is valid (23,611 bytes), but the live endpoint is `200 text/html` (7,323 bytes) and emits no browser download.
+
+---
+
+# Original build handoff
 
 Date: 2026-08-27
 Work order: `receipt-statement-linker-build-1`
