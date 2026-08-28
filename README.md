@@ -39,7 +39,7 @@ See [the visual system](.factory/design.md), [handoff](.factory/handoff.md), [pr
 
 ## Deploy
 
-Serve `dist/site/` as a static site. The factory owns DNS and deployment. Register the paid product with the factory billing workflow before release; the UI intentionally uses the product slug rather than a hardcoded provider product ID.
+Deploy the exact output of `npm run build`: `dist/site/` is the static-site root and includes both `downloads/receipt-statement-linker-chrome.zip` and `staticwebapp.config.json`. The latter keeps the ZIP out of navigation fallback, makes hashed assets immutable, and sets the CSP/framing policy; do not deploy `site/` directly. The factory owns DNS and deployment. Register the paid product with the factory billing workflow before release; the UI intentionally uses the product slug rather than a hardcoded provider product ID.
 
 ## License
 

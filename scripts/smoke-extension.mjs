@@ -44,8 +44,12 @@ try {
   const results = await new AxeBuilder({ page }).analyze();
   const serious = results.violations.filter((violation) => ['serious', 'critical'].includes(violation.impact ?? ''));
   if (serious.length) throw new Error(`Extension axe violations: ${JSON.stringify(serious.map((violation) => ({ id: violation.id, nodes: violation.nodes.map((node) => ({ target: node.target, summary: node.failureSummary })) })))}`);
+  await page.setViewportSize({ width: 390, height: 844 });
+  if (await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)) throw new Error('Extension workbench overflows at 390px.');
+  await page.keyboard.press('Tab');
+  if (await page.locator(':focus-visible').count() !== 1) throw new Error('Extension does not expose a keyboard focus target at 390px.');
   if (consoleErrors.length) throw new Error(`Extension console errors: ${consoleErrors.join(' | ')}`);
-  console.log('Extension smoke passed: capture → CSV import → approval → export, with no serious axe violations.');
+  console.log('Extension smoke passed: capture → CSV import → approval → export, desktop and 390px layout, with no serious axe violations.');
 } finally {
   await context.close();
 }
