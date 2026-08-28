@@ -2,7 +2,7 @@ import { resolve } from 'node:path';
 import { chromium } from 'playwright';
 import AxeBuilder from '@axe-core/playwright';
 
-const extensionPath = resolve('.output/chrome-mv3');
+const extensionPath = resolve(process.env.EXTENSION_PATH ?? '.output/chrome-mv3');
 const context = await chromium.launchPersistentContext('', {
   headless: true,
   channel: 'chromium',

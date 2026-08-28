@@ -19,4 +19,13 @@ describe('static deployment policy', () => {
     expect(policy.globalHeaders['Content-Security-Policy']).toContain("frame-ancestors 'none'");
     expect(policy.globalHeaders['X-Frame-Options']).toBe('DENY');
   });
+
+  it('keeps the install path and deployment root aligned', async () => {
+    const readme = await readFile('README.md', 'utf8');
+    const index = await readFile('site/index.html', 'utf8');
+
+    expect(index).toContain('/downloads/receipt-statement-linker-chrome.zip');
+    expect(readme).toContain('dist/site/');
+    expect(readme).toContain('downloads/receipt-statement-linker-chrome.zip');
+  });
 });

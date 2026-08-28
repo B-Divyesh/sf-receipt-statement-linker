@@ -25,6 +25,7 @@ npm test             # core unit tests
 npm run check        # TypeScript
 npm run build        # extension, zip, and static site
 npm run test:e2e     # Playwright + axe against the built site
+npm run test:consumer # load the packaged ZIP in a fresh Chromium profile
 ```
 
 The exact production build command is `npm run build`. It writes the deployable static site to `dist/site/` (with `index.html` at that root), the unpacked extension to `dist/extension/chrome-mv3/`, and the installable archive to `dist/site/downloads/receipt-statement-linker-chrome.zip`.

@@ -1,34 +1,49 @@
-# Receipt Statement Linker — verification handoff
+# Receipt Statement Linker — repair handoff
 
 Date: 2026-08-28
-Work order: `receipt-statement-linker-verify-3`
-Tested candidate: `a2dfe114ee23396253040a5ea7144527335d4254`
-URL: <https://receipt-statement-linker.sociobot.in>
 
-## Release status: **FAIL**
+Work order: `receipt-statement-linker-repair-2`
 
-The candidate’s local product build and end-to-end extension workflow pass, but the live deployment does not publish the extension ZIP that all public install links require. The real job cannot begin for a new user.
+Verifier baseline: `f8861feec43da3609b11d823fc06a8550d8cef28`
+Repaired deployment: <https://receipt-statement-linker.sociobot.in>
 
-**P0:** `GET`/`HEAD /downloads/receipt-statement-linker-chrome.zip` returns `404 text/html` (2,400-byte error page). Chromium’s public download click produces a canceled download, not an archive. The locally built, valid 23,611-byte ZIP has SHA-256 `ca8090896b4b9c3375f1e661ce0efc37903f5888788d5913252681652a81e332`.
+## Release status: PASS
 
-## What was verified
+The P0 verifier finding is repaired: the public Chromium install link now serves the real extension archive. The deployment used the exact `dist/site/` result of `npm run build` (Azure Static Web Apps deployment `d4766245-f682-4641-9528-0b7cc1dfd67f`).
+
+`GET` and `HEAD /downloads/receipt-statement-linker-chrome.zip` now return `200`, `Content-Type: application/zip`, `Content-Disposition: attachment; filename=receipt-statement-linker-chrome.zip`, and immutable one-year caching. The live download is 23,611 bytes with SHA-256 `ca8090896b4b9c3375f1e661ce0efc37903f5888788d5913252681652a81e332`, exactly matching the local artifact; `unzip -t` passes and fresh Chromium download is not canceled.
+
+## Repair and regression coverage
+
+- Added `scripts/verify-package.mjs`, invoked by `npm run build` and exposed as `npm run test:package`. It fails the release build unless `dist/site/index.html`, the public ZIP, and `staticwebapp.config.json` are present; it verifies the ZIP signature/size plus fallback exclusion and attachment/media-type policy.
+- Added a source-level regression test ensuring the CTA, README deployment root, and archive path cannot drift apart.
+- Added `npm run test:consumer`, which unpacks the actual generated ZIP into a temporary directory and loads it in a fresh Chromium MV3 profile. The existing end-to-end workflow then proves capture → CSV import → explicit approval → CSV export from the consumer artifact, at desktop and 390px, with axe and console checks.
+- `scripts/smoke-extension.mjs` now accepts `EXTENSION_PATH`, allowing that same smoke coverage to exercise either the unpacked build or the packaged consumer artifact.
+
+## Verification evidence
+
+Performed after a clean dependency install:
 
 ```sh
-npm ci
-npm audit --omit=dev --audit-level=high  # 0 vulnerabilities
-npm test                                 # PASS, 9/9
-npm run check                            # PASS
-npm run build                            # PASS
-npm run test:e2e                         # PASS, 8/8
-npm run test:extension                   # PASS
+npm ci                                             # 178 packages
+npm audit --omit=dev --audit-level=high            # 0 vulnerabilities
+npm test                                           # PASS — 10 tests
+npm run check                                      # PASS — tsc --noEmit
+npm run build                                      # PASS — extension, ZIP, site, package gate
+npm run test:package                               # PASS
+npm run test:e2e                                   # PASS — 8 Playwright + axe tests
+npm run test:extension                             # PASS — local MV3 smoke
+npm run test:consumer                              # PASS — packaged ZIP in fresh profile
 unzip -t dist/site/downloads/receipt-statement-linker-chrome.zip  # PASS
 ```
 
-- Independently exercised capture, normal import, explicit approval, enriched CSV and manifest export; zero amount, invalid URL, malformed/unreadable/oversized CSV recovery; clear-statement cancel/confirm; and the 25-receipt boundary.
-- Desktop and 390px local extension/site checks passed with keyboard focus, reduced motion, no normal-state overflow, no console errors, and no serious/critical axe findings.
-- Privacy checks passed: normal extension work made no external request; manifest permissions are only `storage`, `downloads`, and `activeTab`; there are no analytics, remote fonts, host permissions, or content scripts.
-- Live `/`, legal pages, JS/CSS, and `sw.js` byte-match this candidate. Live headers/caching/CSP/frame protection are present; first controlled offline reload works. Live mobile axe and console checks pass. Lighthouse mobile: 100/100/100/100, FCP 1.0 s, LCP 1.1 s, TBT 0 ms, CLS 0.
+- Build budgets: initial JS 2,666 bytes; CSS 10,526 bytes; extension ZIP 23,611 bytes; unpacked extension 49,339 bytes.
+- Browser coverage: local desktop 1440px keyboard entry, local and live 390×844 no-overflow/keyboard/axe checks, meaningful title/lang/main/h1 checks, focus ring, reduced-motion test, static worker asset checks, and a first controlled live desktop offline reload all pass without console errors.
+- Live privacy/identity: live first paint contacted only `receipt-statement-linker.sociobot.in`; no analytics, remote font, or third-party script was observed. The built extension manifest has only `storage`, `downloads`, and `activeTab`, no host permissions, and no content scripts.
+- Response policy: live HTML and `sw.js` are `no-cache, no-store, must-revalidate`; hashed assets and ZIP are immutable. CSP includes `frame-ancestors 'none'`, and `X-Frame-Options: DENY`, `nosniff`, HSTS, strict referrer policy, and restrictive permissions policy are present.
+- Live Lighthouse 13 mobile: **100 Performance / 100 Accessibility / 100 Best Practices / 100 SEO**; FCP 303 ms, LCP 303 ms, TBT 0 ms, CLS 0. Lighthouse emitted its known post-report Chromium `TARGET_CRASHED` warning while collecting screenshot/BFCache artifacts, but wrote the complete scored report; independent Playwright checks had no browser errors.
 
-## Required next step
+## Known notes
 
-Deploy the exact `dist/site/` output, including `downloads/receipt-statement-linker-chrome.zip`, then rerun live archive header/hash/browser-download checks and install the downloaded archive in a fresh Chromium profile. See `.factory/verification-3.md` for complete evidence.
+- The distributed archive remains an unpacked Chromium extension for developer-mode installation, not a browser-store-signed package; this is the product's established delivery model.
+- No paid checkout transaction was run. Existing license behavior was preserved; normal receipt and statement work remains local-first and free.
